@@ -5,8 +5,12 @@ import httplib, urllib
 import ZabbixSender
 import logging
 import os.path
+import datetime
+import time
+import pytz
 
 from ZabbixSender import ZabbixSender
+from datetime import datetime, timedelta
 
 #ip_host = "192.168.66.225"
 
@@ -32,13 +36,35 @@ logger = logging.getLogger('ZBX Agent Client')
 import cgitb
 cgitb.enable()
 
+#Checa se o horario de verao esta vigente
+def is_dst(zonename):
+    tz = pytz.timezone(zonename)
+    now = pytz.utc.localize(datetime.utcnow())
+    return now.astimezone(tz).dst() != timedelta(0)
+
+def zbx_date():
+    zb_date = datetime.now()
+    ano = int(zb_date.strftime("%Y"))
+    mes = int(zb_date.strftime("%m"))
+    dia = int(zb_date.strftime("%d"))
+    hora = int(zb_date.strftime("%H"))
+    minuto = int(zb_date.strftime("%M"))
+    segundo = int(zb_date.strftime("%S"))
+    dia_semana = int(zb_date.strftime("%w"))
+    dia_ano = int(zb_date.strftime("%j"))
+    if is_dst("America/Sao_Paulo"):
+        zb_timestamp = time.mktime((ano,mes,dia,hora,minuto,segundo,dia_semana,dia_ano,1))
+    else:
+        zb_timestamp = time.mktime((ano,mes,dia,hora,minuto,segundo,dia_semana,dia_ano,0))
+    return zb_timestamp
+
 #Checa se os dados do POST nao estao vazios 
 def check_post():
         if (not client_host) or (not client_key) or (not client_valor) or (not token):
                 return False
         else:
                 return True
-
+    
 #Prepara os dados para enviar para o Zabbix
 def send_data():
         token_ok=False
@@ -63,14 +89,17 @@ def send_data():
 
 #Envia os dados para o servidor da Zabbix
 def send_zabbixtrapper():
-        sender.AddData(host = u'%s' % (client_host), key = u'%s' % (client_key), value = u'%s' % (client_valor))
+        print "Timestamp: " + str(data_notificacao)
+        print "<br>"
+        sender.AddData(host = u'%s' % (client_host), key = u'%s' % (client_key), value = u'%s' % (client_valor), clock = u'%d' % (data_notificacao))
         res = sender.Send()
         sender.ClearData()
         print res
 
 #Inicio do programa
+data_notificacao = zbx_date()
 logger.info("Conexao estabelecida.",extra=d)
-logger.info("Token do cliente: %s; Dados do POST: host:%s | key:%s | value:%s",token_info,client_host,client_key,client_valor,extra=d)
+logger.info("Token do cliente: %s; Dados do POST: host:%s | key:%s | value:%s | Timestamp:%d",token_info,client_host,client_key,client_valor,data_notificacao,extra=d)
 print "Content-Type: text/html;charset=utf-8"
 print 
 print "<TITLE>Zabbix Sender API</TITLE>"
