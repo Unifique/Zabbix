@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>3.0</version>
-    <date>2016-11-29T16:45:20Z</date>
+    <date>2016-11-30T19:26:57Z</date>
     <groups>
         <group>
             <name>Templates em Homologacao</name>
@@ -429,7 +429,7 @@
             <width>900</width>
             <height>200</height>
             <yaxismin>980.0000</yaxismin>
-            <yaxismax>1010.0000</yaxismax>
+            <yaxismax>1030.0000</yaxismax>
             <show_work_period>1</show_work_period>
             <show_triggers>1</show_triggers>
             <type>0</type>
