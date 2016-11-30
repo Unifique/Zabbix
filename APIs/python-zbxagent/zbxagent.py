@@ -26,7 +26,7 @@ ip_host = cgi.escape(os.environ["REMOTE_ADDR"])
 token_info = '*****************' +  str(token)[17:]
 
 # Set up a specific logger with our desired output level
-LOG_FILENAME = '/var/log/zabbixsrv/zbxagent.log'
+LOG_FILENAME = '/var/log/zabbix/zbxagent_api.log'
 FORMAT = '%(asctime)s [%(levelname)s] (%(clientip)s) --> %(message)s'
 d = {'clientip': ip_host}
 logging.basicConfig(filename=LOG_FILENAME,filemode='a',format=FORMAT, datefmt='%d/%m/%Y %H:%M:%S',level=logging.INFO)
