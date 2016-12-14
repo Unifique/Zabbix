@@ -48,6 +48,7 @@ else:
         ajuda()
         quit()
  
+# Usado codigo do script https://www.iodigitalsec.com/2014/11/22/dns-black-list-rbl-checking-in-python/
 for bl in bls:
         try:
                 if use_rbl == bl or use_rbl == 'all':
