@@ -1,11 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# Script para verificar se um determinado IP esta listado nas blacklists abaixo
+# Dependencias:
+#                dnspython
+#
+# *Obs: Necessario estar instalado a biblioteca dnspython para funcionar.
+# A mesma pode ser obtida pelo comando "pip install dnspython" os usar o repositorio do S.O.
+
 import dns.resolver
 import sys
 import re
 
-ip_regex = '(([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])'
+ip_regex = '^(([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$'
 bls = ["zen.spamhaus.org", "spam.abuse.ch", "cbl.abuseat.org", "virbl.dnsbl.bit.nl", "dnsbl.inps.de", 
     "ix.dnsbl.manitu.net", "dnsbl.sorbs.net", "spam.dnsbl.sorbs.net", "bl.spamcannibal.org", "bl.spamcop.net", 
     "xbl.spamhaus.org", "pbl.spamhaus.org", "dnsbl-1.uceprotect.net", "dnsbl-2.uceprotect.net", 
@@ -34,7 +41,7 @@ if len(sys.argv) == 3:
                         ajuda()
                         quit()
         else:
-                print '\n### IP invalido! ###\n'
+                print '### IP invalido! ###\n'
                 ajuda()
                 quit()
 else:
@@ -49,8 +56,8 @@ for bl in bls:
                                 query = '.'.join(reversed(str(IP).split("."))) + "." + bl
                                 answers = my_resolver.query(query, "A")
                                 answer_txt = my_resolver.query(query, "TXT")
-                                print 'IP: %s IS listed in %s (%s: %s)' %(IP, bl, answers[0], answer_txt[0])
+                                print 'IP: %s ESTA LISTADO em %s (%s: %s)' %(IP, bl, answers[0], answer_txt[0])
                         except dns.resolver.NXDOMAIN:
-                                print 'IP: %s is NOT listed in %s' %(IP, bl)
+                                print 'IP: %s nao esta listado em %s' %(IP, bl)
         except NameError:
                 quit()
